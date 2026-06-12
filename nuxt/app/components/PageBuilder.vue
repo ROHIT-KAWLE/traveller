@@ -1,22 +1,20 @@
 <script setup lang="ts">
-interface PageBuilderProps {
-	sections: PageBlock[];
-}
+import type { PageBlock } from '#shared/types/schema'
 
-const props = defineProps<PageBuilderProps>();
 
-const validBlocks = computed(() =>
-	props.sections.filter(
-		(block): block is PageBlock & { collection: string; item: object } =>
-			typeof block.collection === 'string' && !!block.item && typeof block.item === 'object',
-	),
-);
+const props = defineProps<{
+  sections: PageBlock[]
+}>()
+
+const validBlocks = computed(() => {
+  return (props.sections || []).filter((block) => {
+    return block?.collection && block?.item
+  })
+})
 </script>
 
 <template>
-	<div v-for="block in validBlocks" :key="block.id" :data-background="block.background" class="py-16">
-		<Container>
-			<BaseBlock :block="block" />
-		</Container>
-	</div>
+  <div v-for="block in validBlocks" :key="block.id">
+    <BaseBlock :block="block" />
+  </div>
 </template>

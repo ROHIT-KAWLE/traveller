@@ -9,6 +9,7 @@ export default defineNuxtConfig({
 	],
 
 	ssr: true,
+
 	modules: [
 		'@nuxt/image',
 		'@nuxtjs/seo',
@@ -26,24 +27,18 @@ export default defineNuxtConfig({
 	css: ['~/assets/css/tailwind.css'],
 
 	runtimeConfig: {
-		public: {
-			siteUrl: process.env.NUXT_PUBLIC_SITE_URL as string,
-			// Enabled by default; set to 'false' to disable
-			enableVisualEditing: process.env.NUXT_PUBLIC_ENABLE_VISUAL_EDITING !== 'false',
-			directusUrl: process.env.DIRECTUS_URL || 'http://localhost:8055'
-		},
+		// Private — server only
 		directusServerToken: process.env.DIRECTUS_SERVER_TOKEN,
+		public: {
+			// Public — available on client and server
+			siteUrl: process.env.NUXT_PUBLIC_SITE_URL as string,
+			directusUrl: process.env.DIRECTUS_URL || 'http://localhost:8055',
+			enableVisualEditing: process.env.NUXT_PUBLIC_ENABLE_VISUAL_EDITING !== 'false',
+		},
 	},
 
 	shadcn: {
-		/**
-		 * Prefix for all the imported component
-		 */
 		prefix: '',
-		/**
-		 * Directory that the component lives in.
-		 * @default "./components/ui"
-		 */
 		componentDir: './app/components/ui',
 	},
 
@@ -76,6 +71,7 @@ export default defineNuxtConfig({
 	site: {
 		url: process.env.NUXT_PUBLIC_SITE_URL as string,
 	},
+
 	vue: {
 		propsDestructure: true,
 	},

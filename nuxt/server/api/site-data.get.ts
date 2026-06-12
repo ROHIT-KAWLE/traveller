@@ -74,7 +74,8 @@ export default defineEventHandler(async (_event) => {
 		]);
 
 		return { globals, headerNavigation, footerNavigation };
-	} catch {
-		throw createError({ statusCode: 500, statusMessage: 'Internal Server Error' });
-	}
+	} catch (error) {
+		console.error('SITE DATA ERROR:', error);
+        throw error;
+    }
 });

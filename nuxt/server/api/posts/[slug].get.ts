@@ -114,30 +114,28 @@ export default defineEventHandler(async (event) => {
 			// Filter logic:
 			// - If preview mode: fetch any status (to show draft content)
 			// - If not preview: only fetch published content (for public viewing)
+			console.log('LOOKING FOR SLUG:', slug)
+			console.log('PREVIEW:', preview)
+			console.log('TOKEN EXISTS:', !!token)
+			
 			const postsData = await directusServer.request(
-				token && token.trim()
-					? withToken(
-							token,
-							readItems('posts', {
-								filter:
-									preview === 'true' ? { slug: { _eq: slug } } : { slug: { _eq: slug }, status: { _eq: 'published' } },
-								limit: 1,
-								fields: postFields as any,
-							}),
-						)
-					: readItems('posts', {
-							filter:
-								preview === 'true' ? { slug: { _eq: slug } } : { slug: { _eq: slug }, status: { _eq: 'published' } },
-							limit: 1,
-							fields: postFields as any,
-						}),
+				readItems('posts', {
+					filter: {
+						slug: { _eq: slug },
+						status: { _eq: 'published' },
+					},
+					limit: 1,
+					fields: postFields as any,
+				}),
 			);
-
+			
 			if (!postsData.length) {
-				throw createError({ statusCode: 404, message: `Post not found: ${slug}` });
+				throw createError({
+					statusCode: 404,
+					message: `Post not found: ${slug}`,
+				});
 			}
-
-			post = postsData[0] as Post;
+			post = postsData[0] as unknown as Post;
 		}
 
 		// Content Discovery: Fetch related posts for better user engagement
@@ -154,6 +152,8 @@ export default defineEventHandler(async (event) => {
 		// Return both the main post and related posts for the frontend
 		return { post, relatedPosts };
 	} catch (error) {
-		throw createError({ statusCode: 500, message: `Failed to fetch post: ${slug}`, data: error });
-	}
+		console.error('POST API ERROR:', error)
+		
+		throw error
+    }
 });

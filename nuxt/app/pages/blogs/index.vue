@@ -1,136 +1,47 @@
+<script setup lang="ts">
+const config = useRuntimeConfig()
+const directusUrl = config.public.directusUrl
+
+const { data, pending, error } = await useFetch('/api/posts')
+
+const posts = computed(() => data.value?.posts || [])
+
+useSeoMeta({
+  title: 'Blog',
+  description: 'Read our latest posts',
+  ogTitle: 'Blog',
+  ogDescription: 'Read our latest posts',
+})
+</script>
+
 <template>
-  <div>
+  <section class="p-10">
+    <h1 class="text-3xl font-bold mb-6">Blogs</h1>
 
-    <section class="hero">
-      <div class="overlay">
-        <h1>Travel Blogs</h1>
-        <p>Explore travel tips, guides and destinations</p>
-      </div>
-    </section>
+    <div v-if="pending">Loading...</div>
 
-    <section class="blog-container">
+    <div v-else-if="error">Failed to load posts.</div>
 
-      <div class="blog-card">
-
+    <div v-else class="grid gap-6 grid-cols-1 md:grid-cols-3">
+      <NuxtLink
+        v-for="post in posts"
+        :key="post.id"
+        :to="`/blogs/${post.slug}`"
+        class="border p-4 rounded"
+      >
         <img
-          src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee"
-          alt=""
-        >
+          v-if="post.image"
+          :src="`${directusUrl}/assets/${post.image}`"
+          :alt="post.title"
+          class="w-full h-48 object-cover"
+        />
 
-        <div class="content">
-          <h2>Travel Tips</h2>
+        <h2 class="text-xl font-bold mt-2">
+          {{ post.title }}
+        </h2>
 
-          <p>
-            Discover the best places to visit in Coimbatore and nearby regions.
-          </p>
-
-          <NuxtLink to="/blogs/travel-tips">
-            Read More →
-          </NuxtLink>
-        </div>
-
-      </div>
-
-      <div class="blog-card">
-
-        <img
-          src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c"
-          alt=""
-        >
-
-        <div class="content">
-          <h2>Taxi Guide</h2>
-
-          <p>
-            Learn how to choose the perfect taxi service for your trip.
-          </p>
-
-          <NuxtLink to="/blogs/taxi-guide">
-            Read More →
-          </NuxtLink>
-        </div>
-
-      </div>
-
-      <div class="blog-card">
-
-        <img
-          src="https://images.unsplash.com/photo-1503376780353-7e6692767b70"
-          alt=""
-        >
-
-        <div class="content">
-          <h2>Top Destinations</h2>
-
-          <p>
-            Explore hidden gems and popular tourist attractions.
-          </p>
-
-          <NuxtLink to="/blogs/top-destinations">
-            Read More →
-          </NuxtLink>
-        </div>
-
-      </div>
-
-    </section>
-
-  </div>
+        <p>{{ post.description }}</p>
+      </NuxtLink>
+    </div>
+  </section>
 </template>
-
-<style scoped>
-.hero{
-  height:40vh;
-  background:url('https://images.unsplash.com/photo-1500530855697-b586d89ba3ee')
-  center/cover;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-}
-
-.overlay{
-  color:white;
-  text-align:center;
-  background:rgba(0,0,0,.5);
-  padding:30px;
-  border-radius:10px;
-}
-
-.blog-container{
-  max-width:1200px;
-  margin:auto;
-  padding:60px 20px;
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
-  gap:30px;
-}
-
-.blog-card{
-  border-radius:15px;
-  overflow:hidden;
-  box-shadow:0 5px 20px rgba(0,0,0,.1);
-  transition:.3s;
-}
-
-.blog-card:hover{
-  transform:translateY(-8px);
-}
-
-.blog-card img{
-  width:100%;
-  height:220px;
-  object-fit:cover;
-}
-
-.content{
-  padding:20px;
-}
-
-.content h2{
-  margin-bottom:10px;
-}
-
-.content p{
-  margin-bottom:15px;
-}
-</style>

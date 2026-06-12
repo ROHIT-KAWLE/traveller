@@ -32,11 +32,13 @@ export default defineEventHandler(async (event) => {
 			}),
 		);
 
-		let [posts, count] = await Promise.all([postsPromise, countPromise]);
+		let [posts, countResponse] = await Promise.all([postsPromise, countPromise]);
+
+		const totalCount = Number((countResponse as any)?.[0]?.count) || 0;
 
 		return {
 			posts,
-			count: Number(count[0]?.count) || 0,
+			count: totalCount,
 		};
 	} catch {
 		throw createError({ statusCode: 500, message: 'Failed to fetch paginated posts' });
