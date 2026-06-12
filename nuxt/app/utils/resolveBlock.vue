@@ -11,7 +11,7 @@ const componentMap: Record<string, any> = {
   block_posts: defineAsyncComponent(() => import('~/components/block/Posts.vue')),
   block_pricing: defineAsyncComponent(() => import('~/components/block/Pricing.vue')),
   block_richtext: defineAsyncComponent(() => import('~/components/block/RichText.vue')),
-  block_form: defineAsyncComponent(() => import('~/components/block/Form.vue')),
+  block_form: defineAsyncComponent(() => import('~/components/block/FormBlock.vue')),
 }
 
 const component = computed(() => {
