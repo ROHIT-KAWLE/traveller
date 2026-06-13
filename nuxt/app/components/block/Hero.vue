@@ -2,11 +2,11 @@
 interface HeroProps {
   data: {
     id: string
-    tagline: string
-    headline: string
-    description: string
-    layout: 'image_image_left' | 'image_center' | 'image_left'
-    image: string
+    tagline?: string
+    headline?: string
+    description?: string
+    layout?: string
+    image?: string
     button_group?: {
       id?: string
       buttons: Array<{
@@ -25,7 +25,6 @@ interface HeroProps {
 const { setAttr } = useVisualEditing()
 const config = useRuntimeConfig()
 const directusUrl = config.public.directusUrl
-
 const props = defineProps<HeroProps>()
 
 function resolveButtonHref(btn: HeroProps['data']['button_group']['buttons'][0]) {
@@ -36,27 +35,25 @@ function resolveButtonHref(btn: HeroProps['data']['button_group']['buttons'][0])
 </script>
 
 <template>
-  <section class="relative w-full min-h-[92vh] flex flex-col overflow-hidden">
+  <section class="relative w-full min-h-[92vh] flex flex-col overflow-hidden bg-[var(--background-variant-color)]">
 
     <!-- Background image -->
-    <div class="absolute inset-0 z-0">
+    <div v-if="data.image" class="absolute inset-0 z-0">
       <img
-        v-if="data.image"
         :src="`${directusUrl}/assets/${data.image}`"
         :alt="data.headline || 'Hero'"
         class="w-full h-full object-cover"
         :data-directus="setAttr({ collection: 'block_hero', item: data.id, fields: ['image', 'layout'], mode: 'modal' })"
       />
-      <!-- Dark overlay -->
       <div class="absolute inset-0 bg-black/55" />
     </div>
 
     <!-- Content -->
-    <div class="relative z-10 flex-1 flex flex-col items-center justify-center text-center px-4 py-24">
+    <div class="relative z-10 flex-1 flex flex-col items-center justify-center text-center px-6 py-24">
 
       <p
         v-if="data.tagline"
-        class="text-white/80 uppercase tracking-widest text-sm md:text-base font-sans mb-4"
+        class="text-white/80 uppercase tracking-widest text-sm md:text-base mb-4"
         :data-directus="setAttr({ collection: 'block_hero', item: data.id, fields: 'tagline', mode: 'popover' })"
       >
         {{ data.tagline }}
@@ -78,11 +75,9 @@ function resolveButtonHref(btn: HeroProps['data']['button_group']['buttons'][0])
         {{ data.description }}
       </p>
 
-      <!-- Buttons -->
       <div
         v-if="data.button_group?.buttons?.length"
         class="mt-8 flex flex-wrap justify-center gap-4"
-        :data-directus="setAttr({ collection: 'block_button_group', item: data.button_group?.id, fields: 'buttons', mode: 'modal' })"
       >
         <NuxtLink
           v-for="btn in data.button_group.buttons"
@@ -94,14 +89,14 @@ function resolveButtonHref(btn: HeroProps['data']['button_group']['buttons'][0])
             : 'bg-white text-gray-900 hover:bg-white/90'"
         >
           {{ btn.label }}
-          <span class="text-base">→</span>
+          <span>→</span>
         </NuxtLink>
       </div>
 
     </div>
 
-    <!-- Wave divider at the bottom -->
-    <div class="relative z-10 w-full leading-none">
+    <!-- Wave divider — uses white fill to match light mode page background -->
+    <div class="relative z-10 w-full leading-none -mb-1">
       <svg
         viewBox="0 0 1440 80"
         xmlns="http://www.w3.org/2000/svg"
@@ -110,7 +105,8 @@ function resolveButtonHref(btn: HeroProps['data']['button_group']['buttons'][0])
       >
         <path
           d="M0,40 C180,80 360,0 540,40 C720,80 900,0 1080,40 C1260,80 1440,20 1440,20 L1440,80 L0,80 Z"
-          fill="var(--background-color)"
+          fill="white"
+          class="dark:fill-[#0e1a2b]"
         />
       </svg>
     </div>
